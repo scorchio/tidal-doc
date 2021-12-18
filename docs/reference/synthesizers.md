@@ -5,23 +5,26 @@ id: synthesizers
 
 **SuperDirt** is installed along with an extensive list of *default* audio effects and synthesizers. Note that you can also extend this list by adding your own synthesizers and audio effects to the audio engine. For instance, check out the [Mutable Instruments](https://club.tidalcycles.org/t/mutable-instruments-ugens/2730) or the [SynthDefs for Tidal](https://club.tidalcycles.org/t/synthdefs-for-tidal/1092) threads on the **Tidal Club** forum.
 
-## Basic instruments
 
-Default values are in **parentheses**.  In all synths, `sustain` (default 1) affects the overall envelope timescale. The parameters `pan` and `freq` can also be set in all synths. The default value for freq is usually 440 – in synths where it’s not, `freq` and its default value for that synth are mentioned in its parameter list below. 
+## Parameters available for all synthesizers
 
-:::caution
-Some undocumented parameters are included without descriptions.
-:::
+| Parameter | What it adjusts            | Range   | Default value                |
+| --------- | -------------------------- | ------- | ---------------------------- |
+| `sustain` | Overall envelope timescale | 0 - ??  | 1                            |
+| `pan`     | Position in space          | 0 - 1   | 0.5                          |
+| `freq`    | Tuning                     | ?? (Hz) | 440 (unless specified below) |
 
 
-### Additive synthesis
-#### Supergong
+## Additive synthesis
+### Supergong
 
 An example of additive synthesis, building up a gong-like noise from a sum of sine-wave harmonics. Notice how the envelope timescale and amplitude can be scaled as a function of the harmonic frequency. 
 
-* `voice` (0): provides something like a tone knob
-* `decay` (1): adjusts how the harmonics decay
-* `accelerate` (0): for pitch glide
+| Parameter    | What it adjusts                     | Range  | Default value |
+| ------------ | ----------------------------------- | ------ | ------------- |
+| `voice`      | Provides something like a tone knob | 0 - ?? | 0             |
+| `decay`      | How the harmonics decay             | 0 - ?? | 1             |
+| `accelerate` | Pitch glide amount                  | 0 - ?? | 0             |
 
 ```c
 d1 $ n (slow 2 $ fmap (*7) $ run 8) 
@@ -30,81 +33,77 @@ d1 $ n (slow 2 $ fmap (*7) $ run 8)
   # voice "[0.5 0]/8" 
 ```
 
-### Substractive synthesis
-#### Supersquare
+## Substractive synthesis
+### Supersquare, supersaw and superpwm
 
-A moog-inspired square-wave synth; variable-width pulses with filter frequency modulated by an LFO:
+A Moog-inspired family of synths with common parameters:
+- `supersquare`: square-wave synth; variable-width pulses with filter frequency modulated by an LFO.
+- `supersaw`: sawtooth synth; slightly detuned saws with triangle harmonics, filter frequency modulated by LFO.
+- `superpwm`: PWM synth; pulses multiplied by phase-shifted pulses, double filtering with an envelope on the second.
 
-* `voice`: controls the pulse width (exactly zero or one will make no sound)
-* `decay` (0): the decay
-* `accelerate` (0): pitch glide
-* `semitone` (12): how far off in pitch the secondary oscillator is (need not be integer)
-* `resonance` (0.2): filter resonance
-* `lfo` (1): how much the LFO affects the filter frequency
-* `rate` (1): LFO rate
-* `pitch1` (1): filter frequency scaling multiplier, the frequency itself follows the pitch set by “n”
+The only parameter which means different things per synth is `voice`:
 
-#### Supersaw
+| Synth         | What `voice` controls            | Range                                          | Default value |
+| ------------- | -------------------------------- | ---------------------------------------------- | ------------- |
+| `supersquare` | Pulse width                      | 0 - 1 (exactly zero or one will make no sound) | 0.5           |
+| `supersaw`    | Relative phase and detune amount | 0 - 1                                          | 0.5           |
+| `superpwm`    | Phase shift rate                 | 0 - 1                                          | 0.5           |
 
-A moog-inspired sawtooth synth; slightly detuned saws with triangle harmonics, filter frequency modulated by LFO:
+The common parameters are:
 
-* `voice` (0.5): controls a relative phase and detune amount
-* `decay` (0)
-* `accelerate` (0): pitch glide
-* `semitone` (12): how far off in pitch the secondary oscillator is (need not be integer)
-* `resonance` (0.2) filter resonance
-* `lfo` (1) how much the LFO affects the filter frequency
-* `rate` (1): LFO rate
-* `pitch1` (1): filter frequency scaling multiplier, the frequency itself follows the pitch set by “n”
+| Parameter    | What it adjusts                                                                        | Range  | Default value |
+| ------------ | -------------------------------------------------------------------------------------- | ------ | ------------- |
+| `decay`      | Length of decay                                                                        | 0 - ?? | 0             |
+| `accelerate` | Pitch glide amount                                                                     | 0 - ?? | 0             |
+| `semitone`   | How far off in pitch the secondary oscillator is (need not be integer)                 | 0 - ?? | 12            |
+| `resonance`  | Filter resonance                                                                       | 0 - ?? | 12            |
+| `lfo`        | How much the LFO affects the filter frequency                                          | 0 - ?? | 1             |
+| `rate`       | LFO rate                                                                               | 0 - ?? | 1             |
+| `pitch1`     | Filter frequency scaling multiplier, the frequency itself follows the pitch set by “n” | 0 - ?? | 1             |
 
-#### Superpwm
-
-A moog-inspired PWM synth; pulses multiplied by phase-shifted pulses, double filtering with an envelope on the second
-
-* `voice`: controls the phase shift rate
-* `decay` (0): decay.
-* `accelerate` (0): pitch glide
-* `semitone` (12): how far off in pitch the secondary oscillator is (need not be integer)
-* `resonance` (0.2): filter resonance
-* `lfo` (1): how much the LFO affects the filter frequency
-* `rate` (1): LFO rate
-* `pitch1` (1): filter frequency scaling multiplier, the frequency itself follows the pitch set by “n”
-
-#### Superchip
+### Superchip
 
 Uses the Atari ST emulation *UGen* with 3 oscillators:
 
-* `slide` (0): for a linear frequency glide
-* `rate` (1): repeats the above glide “n” times (can be fractional or negative)
-* `accelerate` (0): for an overall glide
-* `pitch2` (2): control the ratio of harmonics
-* `pitch3` (3): control the ratio of harmonics
-* `voice` (0): causes variations in the levels of the 3 oscillators
+| Parameter    | What it adjusts                                                    | Range | Default value |
+| ------------ | ------------------------------------------------------------------ | ----- | ------------- |
+| `slide`      | Linear frequency glide                                             | ???   | 0             |
+| `rate`       | How many times `slide` is repeated (can be fractional or negative) | ???   | 1             |
+| `accelerate` | For an overall glide                                               | ???   | 0             |
+| `pitch2`     | The ratio of harmonics                                             | ???   | 2             |
+| `pitch3`     | The ratio of harmonics                                             | ???   | 3             |
+| `voice`      | Variations in the levels of the 3 oscillators                      | ???   | 0             |
 
-#### Superhoover
+### Superhoover
 
 Hoover, adapted from [Wouter Snoei](http://superdupercollider.blogspot.com/2009/06/more-dominator-deconstruction.html)’s implementation:
 
-* `slide` (0): for the amount of initial pitch glide, positive slides up in pitch, negative slides down
-* `decay` (0): for a different envelope shape
-* `accelerate` (0): for constant pitch glide
+| Parameter    | What it adjusts                                                                   | Range | Default value |
+| ------------ | --------------------------------------------------------------------------------- | ----- | ------------- |
+| `slide`      | Amount of initial pitch glide (positive slides up in pitch, negative slides down) | ???   | 0             |
+| `decay`      | Envelope shape                                                                    | ???   | 0             |
+| `accelerate` | Constant pitch glide amount                                                       | ???   | 0             |
 
-#### Superzow
+### Superzow
 
 Phased saws:
 
-* `decay` (0): for envelope shaping
-* `accelerate` (0): for pitch bend
-* `slide` (1): how fast it moves through the phase
-* `detune` (1): for oscillator detuning
+| Parameter    | What it adjusts                     | Range | Default value |
+| ------------ | ----------------------------------- | ----- | ------------- |
+| `decay`      | Envelope shaping                    | ???   | 0             |
+| `accelerate` | Pitch bend                          | ???   | 0             |
+| `slide`      | How fast it moves through the phase | ???   | 1             |
+| `detune`     | Oscillator detuning                 | ???   | 1             |
 
-#### Supertron
+### Supertron
 
 Feedback PWM:
 
-* `accelerate` (0): pitch-glide
-* `voice` (0): number of voices
-* `detune` (0): detune amount
+| Parameter    | What it adjusts    | Range | Default value |
+| ------------ | ------------------ | ----- | ------------- |
+| `accelerate` | Pitch glide amount | ???   | 0             |
+| `voice`      | Number of voices   | ???   | 0             |
+| `detune`     | Detune amount      | ???   | 0             |
 
 ```c
 d1 $ s "supertron" 
@@ -112,71 +111,90 @@ d1 $ s "supertron"
   # accelerate "0.2" 
 ```
 
-#### Superreese
+### Superreese
 
 Vaguely Reese-like synth:
 
-* `accelerate` (0): pitch-glide.
-* `voice` (0): number of voices
-* `detune` (0): detune amount
+| Parameter    | What it adjusts    | Range | Default value |
+| ------------ | ------------------ | ----- | ------------- |
+| `accelerate` | Pitch glide amount | ???   | 0             |
+| `voice`      | Number of voices   | ???   | 0             |
+| `detune`     | Detune amount      | ???   | 0             |
 
-#### Supernoise
+### Supernoise
 
-Digital noise in several flavors with a bandpass filter:
+Digital noise in several flavors with a bandpass filter.
 
 ### Superstatic
 
 Impulse noise with a fadein/fadeout.
 
-* `voice`: at 0 is a digital noise for which “n” controls rate, at 1 is Brown+White noise for which “n” controls knee frequency
-* `accelerate`: causes glide in n, “rate” will cause it to repeat
-* `pitch1`: scales the bandpass frequency (which tracks “n”)
-* `slide`: works like accelerate on the bandpass
-* `resonance`: is the filter resonance
+| Parameter    | What it adjusts                                                                                        | Range | Default value |
+| ------------ | ------------------------------------------------------------------------------------------------------ | ----- | ------------- |
+| `voice`      | Noise type: 0 - digital noise (`n` controls rate), 1 brown + white noise (`n` controls knee frequency) | ???   |               |
+| `accelerate` | Causes glide in n, “rate” will cause it to repeat                                                      | ???   |               |
+| `pitch1`     | Scales the bandpass frequency (which tracks “n”)                                                       | ???   |               |
+| `slide`      | Works like accelerate on the bandpass                                                                  | ???   |               |
+| `resonance`  | Filter resonance                                                                                       | ???   |               |
 
-#### Supercomparator
+### Supercomparator
 
-* `voice` (0.5): scales the comparator frequencies, higher values will sound “breathier”
-* `decay` (0)
-* `accelerate` (0): pitch glide
-* `resonance` (0.5): filter resonance
-* `lfo` (1): how much the LFO affects the filter frequency
-* `rate` (1): LFO rate
-* `pitch1` (1): filter frequency scaling multiplier, the frequency itself follows the pitch set by “n”
+| Parameter    | What it adjusts                                                                        | Range | Default value |
+| ------------ | -------------------------------------------------------------------------------------- | ----- | ------------- |
+| `voice`      | Scales the comparator frequencies, higher values will sound “breathier”                | ???   | 0.5           |
+| `decay`      | ???                                                                                    |       | 0             |
+| `accelerate` | Pitch glide amount                                                                     | ???   | 0             |
+| `resonance`  | Filter resonance                                                                       | ???   | 0.5           |
+| `lfo`        | How much the LFO affects the filter frequency                                          | ???   | 1             |
+| `rate`       | LFO rate                                                                               | ???   | 1             |
+| `pitch1`     | Filter frequency scaling multiplier, the frequency itself follows the pitch set by “n” | ???   | 1             |
 
-### Physical modelling
-#### Supermandolin
+## Physical modelling
+### Supermandolin
 
 Physical modeling of a vibrating string, using a delay line (`CombL`) excited by an intial pulse (`Impulse`). To make it a bit richer, I’ve combined two slightly detuned delay lines:
 
-* `sustain` (1): changes the envelope timescale
-* `accelerate` (0): pitch-glide 
-* `detune` (0.2): detune amount
+| Parameter    | What it adjusts                | Range | Default value |
+| ------------ | ------------------------------ | ----- | ------------- |
+| `sustain`    | Changes the envelope timescale | ???   | 1             |
+| `accelerate` | Pitch glide amount             | ???   | 0             |
+| `detune`     | Detune amount                  | ???   | 0.2           |
 
-#### Superpiano
+### Superpiano
 
 Hooking into a nice synth piano already in **SuperCollider**:
 
-* `velocity`: affects how hard the keys are pressed
-* `sustain`: controls envelope and decay time
-* `detune` (0.1): detune amount.
-* `muffle` (1)
-*  `stereo` (0.2): stereo amount.
+| Parameter  | What it adjusts                       | Range | Default value |
+| ---------- | ------------------------------------- | ----- | ------------- |
+| `velocity` | Affects how hard the keys are pressed | ???   |               |
+| `sustain`  | Controls envelope and decay time      | ???   |               |
+| `detune`   | Detune amount                         | ???   | 0.1           |
+| `muffle`   | ???                                   |       | 1             |
+| `stereo`   | Stereo amount                         | ???   | 0.2           |
 
-#### Superfork
+### Superfork
 
 Tuning fork from Ben Gold’s experimentation and from “On the acoustics of tuning forks”, Rossing Russell and Brown:
 
-* `accelerate` (0): pitch-glide amount.
+| Parameter    | What it adjusts    | Range | Default value |
+| ------------ | ------------------ | ----- | ------------- |
+| `accelerate` | Pitch glide amount | ???   | 0             |
 
-#### Superhammond
+### Superhammond
 
 Hammond B3 sim. Frequency adjustments courtesy of [Tom Wiltshire](https://electricdruid.net/):
 
-* `perc`, `percf` and `decay`: an attempt at the percussion, no idea if it sounds at all reasonable. Vintage Hammonds had `percf` as 2 or 3 (switchable), two perc levels (maybe roughly 0.7 and 1.2?), and two decay options (roughly 0 and maybe 1ish?)
-* `vibrato`, `vrate`, `perc`, `percf`: new parameters you’ll need to define in Tidal if you want to change them.
+| Parameter | What it adjusts                                            | Range | Default value |
+| --------- | ---------------------------------------------------------- | ----- | ------------- |
+| `perc`    | Percussion strength (around 0.7 / 1.2 on vintage Hammonds) | ???   | ???           |
+| `percf`   | Percussion frequency (2 / 3 on vintage Hammonds)           | ???   | ???           |
+| `decay`   | Percussion decay (around 0 / 1 on vintage Hammonds)        | ???   | ???           |
+| `vibrato` | Vibrato strength                                           | ???   | ???           |
+| `vrate`   | Vibrato rate                                               | ???   | ???           |
 
-Voices are drawbar presets:
+`vibrato`, `vrate`, `perc`, `percf` are new parameters you’ll need to define in Tidal if you want to change them.
+
+`voices` are drawbar presets:
 
 * **0.** bass violin 16’
 * **1.** tibia 8’
@@ -189,173 +207,207 @@ Voices are drawbar presets:
 * **8.** Bro’ Jack
 * **9.** Jazz 2
 
-
-#### Supervibe
+### Supervibe
 
 Vibraphone simulation, adapted with some help from Kevin Larke’s thesis Real Time Vibraphone Pitch and Timbre Classification:
 
-* `decay` (0): use larger values to damp higher harmonics
-* `velocity` (1): higher velocity will brighten the sound a bit
-* `accelerate` (0): for a linear pitch bend
-* `modamp` (1): amplitude of the tremolo (0-2 is OK)
-* `modfreq` (7): frequency of the tremolo
-* `detune` (0): adjusts a high harmonic to give the sound a different character
+| Parameter    | What it adjusts                                                 | Range | Default value |
+| ------------ | --------------------------------------------------------------- | ----- | ------------- |
+| `decay`      | Use larger values to damp higher harmonics                      | ???   | 0             |
+| `velocity`   | Higher velocity will brighten the sound a bit                   | ???   | 1             |
+| `accelerate` | For a linear pitch bend                                         | ???   | 0             |
+| `modamp`     | Amplitude of the tremolo (0-2 is OK)                            | ???   | 1             |
+| `modfreq`    | Frequency of the tremolo                                        | ???   | 7             |
+| `detune`     | Adjusts a high harmonic to give the sound a different character | ???   | 0             |
 
-### FM synthesis
-#### Superfm
+## FM synthesis - SuperFM
 
-6-op FM synth (**DX7**-like). Works a bit different from the original **DX7**. Instead of algorithms, you set the amount of modulation every operator receives from other operators and itself (feedback), virtually providing an endless number of possible combinations (algorithms). The synth's author [did an online workshop](https://www.youtube.com/watch?v=REgE33Esy2Q) explaining in depth how everything works:
+SuperFM is a 6-op FM synth (**DX7**-like). It works a bit different from the original **DX7**. Instead of algorithms, you can set the amount of modulation every operator receives from other operators and itself (feedback), providing a virtually endless number of possible combinations (algorithms). 
 
-* `voice`: preset number: 0 is user-defined; 1-5 are randomly generated presets
-* `lfofreq`: overall pitch modulation frequency
-* `lfodepth`: overall pitch modulation amplitude
+The synth's author [did an online workshop](https://www.youtube.com/watch?v=REgE33Esy2Q) explaining in depth how everything works.
 
-Each operator responds to:
+| Parameter  | What it adjusts                                                      | Range | Default value |
+| ---------- | -------------------------------------------------------------------- | ----- | ------------- |
+| `voice`    | Preset number: 0 is user-defined; 1-5 are randomly generated presets | ???   |               |
+| `lfofreq`  | Overall pitch modulation frequency                                   | ???   |               |
+| `lfodepth` | Overall pitch modulation amplitude                                   | ???   |               |
 
-* `amp`: operator volume - becomes carrier
-* `ratio`: frequency ratio
-* `detune`: in Hz
-* `eglevel`: 1-4, 4 envelope generator levels
-* `egrate` 1-4, 4 envelope generator rates
+Each operator (`<op>` 1...6) responds to:
 
-The syntax for operator arguments is `<argumentName + opIndex>[modulatorIndex | egIndex]`. For example:
+| Parameter         | What it adjusts                                                                       | Range | Default value |
+| ----------------- | ------------------------------------------------------------------------------------- | ----- | ------------- |
+| `amp<op>`         | Operator `<op>`'s volume - becomes carrier                                            | ???   |               |
+| `ratio<op>`       | Frequency ratio of `<op>`                                                             | ???   |               |
+| `mod<op><modOp>`  | How much operator `<modOp>` should modulate `<op>` (for feedback, use the same index) | ???
+| `detune<op>`      | Detune amount of `<op>` in Hz                                                         | ???   |               |
+| `eglevel<op><eg>` | Level of envelope generator `<eg>`                                                    | ???   |               |
+| `egrate<op><eg>`  | Rate of envelope generator `<eg>`                                                     | ???   |               |
 
-* `amp1` 1: op1 as carrier with full volume
-* `ratio2` 2.3: op2 frequency ratio
-* `mod11` 0.5: op1 feedback
-* `mod12` 0.78: op1 modulation amount by op2
-* `detune1` 0.2: op1 detune
-* `eglevel12` 0.1: op1 EG level2
-* `egrate11` 0.01: op1 EG rate1
+Examples:
+
+| Setting         | What it adjusts                    |
+| --------------- | ---------------------------------- |
+| `amp1 1`        | Sets op1 as carrier to full volume |
+| `ratio2 2.3`    | Sets op2 frequency ratio           |
+| `mod11 0.5`     | Sets op1 feedback                  |
+| `mod12 0.78`    | Sets op1 modulation amount by op2  |
+| `detune1 0.2`   | Sets op1 detune                    |
+| `eglevel12 0.1` | Sets EG2's level on op1            |
+| `egrate11 0.01` | Sets EG1's rate on op1             |
 
 :::warning
 Higher values go FASTER!
 :::
 
-### Drum synthesis
+## Drum synthesis
 #### Superhex
 
 Waveguide mesh, hexagonal drum-like membrane:
 
-* `rate` (1): ??
-* `accelerate` (0): pitch-glide amount
+| Parameter    | What it adjusts    | Range | Default value |
+| ------------ | ------------------ | ----- | ------------- |
+| `rate`       | ??                 | ???   | 1             |
+| `accelerate` | Pitch glide amount | ???   | 0             |
 
-#### Superkick
+### Superkick
 
 Kick Drum using [Rumble-San](http://blog.rumblesan.com/post/53271713518/drum-sounds-in-supercollider-part-1)’s implementation as a starting point:
 
-* `n`: controls the kick frequency in a nonstandard way
-* `accelerate` (0): sweeps the click filter frequency
-* `pitch1` (1): affects the click frequency
-* `decay` (1): changes the click duration relative to the overall timescale
+| Parameter    | What it adjusts                                  | Range | Default value |
+| ------------ | ------------------------------------------------ | ----- | ------------- |
+| `n`          | Kick frequency in a nonstandard way              | ???   |               |
+| `accelerate` | Sweep on the click filter frequency              | ???   | 0             |
+| `pitch1`     | Click frequency                                  | ???   | 1             |
+| `decay`      | Click duration relative to the overall timescale | ???   | 1             |
 
-#### Super808
+### Super808
 
 A vaguely 808-ish kick drum:
 
-* `n`: controls the chirp frequency
-* `rate` (1): controls the filter sweep speed
-`voice` (0): sets the sinewave feedback
+| Parameter | What it adjusts    | Range | Default value |
+| --------- | ------------------ | ----- | ------------- |
+| `n`       | Chirp frequency    | ???   |               |
+| `rate`    | Filter sweep speed | ???   | 1             |
+| `voice`   | Sinewave feedback  | ???   | 0             |
 
-#### Superhat
+### Superhat
 
 Hi-hat using [Rumble-San](http://blog.rumblesan.com/post/53271713518/drum-sounds-in-supercollider-part-1)’s implementation as a starting point:
 
-* `n`: provides some variation on the frequency in a weird way
-* `accelerate` (0): sweeps the filter
+| Parameter    | What it adjusts                           | Range | Default value |
+| ------------ | ----------------------------------------- | ----- | ------------- |
+| `n`          | Variation on the frequency in a weird way | ???   |               |
+| `accelerate` | Sweep on filter                           | ???   | 0             |
 
-#### Supersnare
+### Supersnare
 
 Snare drum using [Rumble-San](http://blog.rumblesan.com/post/53271713518/drum-sounds-in-supercollider-part-1)’s implementation as a starting point:
 
-* `n` for some variation on frequency
-* `decay` (1): for scaling noise duration relative to tonal part
-* `accelerate` (0): for tonal glide
+| Parameter    | What it adjusts                               | Range | Default value |
+| ------------ | --------------------------------------------- | ----- | ------------- |
+| `n`          | Variation on frequency                        | ???   |               |
+| `decay`      | Scaling noise duration relative to tonal part | ???   | 1             |
+| `accelerate` | Tonal glide                                   | ???   | 0             |
 
-#### Superclap
+### Superclap
 
 Hand clap using [Rumble-San](http://blog.rumblesan.com/post/53271713518/drum-sounds-in-supercollider-part-1)’s implementation as a starting point:
 
-* `n` (?): changes how spread is calculated
-* `delay` (1): controls the echo delay
-* `rate` (1): affects the decay time
-* `pitch1` (1): scales the bandpass frequency
+| Parameter | What it adjusts          | Range | Default value |
+| --------- | ------------------------ | ----- | ------------- |
+| `n`       | How spread is calculated | ???   | ???           |
+| `delay`   | Echo delay               | ???   | 1             |
+| `rate`    | Decay time               | ???   | 1             |
+| `pitch1`  | Bandpass frequency       | ???   | 1             |
 
-#### SOSKick
+### SOSKick
 
 Kick drum synth. Increase `pitch1` and `voice` for interesting electronic percussion:
 
-* `midinote` – controls the root note of the kick (the source comments mention this, but the function doesn’t have this parameter at all)
-* `pitch1` (0): controls modulation frequency in Hz (min: 0, max: SampleRate.ir / 2)
-* `voice` (1): controls modulation input phase in radians (min: 0, max: your sanity)
-* `pitch2` (0): controls WhiteNoise amplitude (min: 0, max: 1)
-* `speed` (0.3): controls WhiteNoise sweep (min: 0, max: 1)
-* `freq` (65)
+| Parameter | What it adjusts                   | Range                   | Default value |
+| --------- | --------------------------------- | ----------------------- | ------------- |
+| `pitch1`  | Modulation frequency in Hz        | 0 - `SampleRate.ir / 2` | 0             |
+| `voice`   | Modulation input phase in radians | 0 - your sanity         | 1             |
+| `pitch2`  | White noise amplitude             | 0 - 1                   | 0             |
+| `speed`   | White noise sweep                 | 0 - 1                   | 0.3           |
+| `freq`    | ???                               | ???                     | 65            |
 
-#### SOSHats
+### SOSHats
 
-* `resonance` (1): bandpass filter resonance value (min: 0, max: 1)
-* `pitch1` (238.5): oscillator modulation in radians (min: 0, max: `SampleRate.ir / 2`)
-* `sustain` (0.5): sustain amount
-* `freq` (220): frequency
+| Parameter   | What it adjusts                  | Range                   | Default value |
+| ----------- | -------------------------------- | ----------------------- | ------------- |
+| `resonance` | Bandpass filter resonance value  | 0 - 1                   | 1             |
+| `pitch1`    | Oscillator modulation in radians | 0 - `SampleRate.ir / 2` | 238.5         |
+| `sustain`   | Sustain amount                   | ???                     | 0.5           |
+| `freq`      | Frequency                        | ???                     | 220           |
 
-#### SOSToms
+### SOSToms
 
-* `voice` (0.5): controls modulation input phase in radians (min: 0, max: your sanity)
-* `sustain` (0.5): sustain amount
-* `freq` (261.626): frequency
+| Parameter | What it adjusts                   | Range           | Default value |
+| --------- | --------------------------------- | --------------- | ------------- |
+| `voice`   | Modulation input phase in radians | 0 - your sanity | 0.5           |
+| `sustain` | Sustain amount                    | ???             | 0.5           |
+| `freq`    | Frequency                         | ???             | 261.626       |
 
-#### SOSSnare
+### SOSSnare
 
-`voice` (0.385): controls modulation input phase in radians (min: 0, max: your sanity)
-`semitone` (0.452): modulation frequency in semitones of fundamental
-`pitch1` (2000): resonance filter frequency (Hz)
-`resonance` (0.1): resonance of bandpass and resonz filters (min: 0, max: 1)
-`freq` (405): frequency
+| Parameter   | What it adjusts                                  | Range           | Default value |
+| ----------- | ------------------------------------------------ | --------------- | ------------- |
+| `voice`     | Modulation input phase in radians                | 0 - your sanity | 0.385         |
+| `semitone`  | Modulation frequency in semitones of fundamental | ???             | 0.452         |
+| `pitch1`    | Resonance filter frequency (Hz)                  | ???             | 2000          |
+| `resonance` | Resonance of bandpass and resonz filters         | 0 - 1           | 0.1           |
+| `freq`      | Frequency                                        | ???             | 405           |
 
-### Audio Input 
-#### in
+## Audio Input 
+### Live audio input - `in`
 
-Live audio input:
-* `in`: audio input 
+| Parameter | What it adjusts | Range | Default value |
+| --------- | --------------- | ----- | ------------- |
+| `in`      | Audio input     | ???   |               |
 
-#### inr
+### Pitch shifted live audio input - `inr`
 
-Pitch shifted live audio input:
+| Parameter    | What it adjusts    | Range | Default value |
+| ------------ | ------------------ | ----- | ------------- |
+| `inr`        | Audio input        | ???   |               |
+| `accelerate` | Pitch glide amount | ???   | 0             |
 
-* `inr`: audio input
-* `accelerate` (0): pitch-glide
+## Other synths and goodies 
 
-### Other synths and goodies 
+### Modulated band limited impulse - `imp`
 
-#### imp
+| Parameter    | What it adjusts    | Range | Default value |
+| ------------ | ------------------ | ----- | ------------- |
+| `accelerate` | Pitch glide amount | ???   | 0             |
 
-Modulated band limited impulse:
-* `accelerate` (0): pitch-glide amount
+### Modulated phase mod sines - `psin`
 
-#### psin
+| Parameter    | What it adjusts    | Range | Default value |
+| ------------ | ------------------ | ----- | ------------- |
+| `accelerate` | Pitch glide amount | ???   | 0             |
 
-Modulated phase mod sines:
-* `accelerate` (0): pitch-glide amount 
+### Gabor grain - `gabor`
 
-#### gabor
+???
 
-Gabor grain
+### Shepard on a cycle - `cyclo`
 
-#### cyclo
+| Parameter    | What it adjusts    | Range | Default value |
+| ------------ | ------------------ | ----- | ------------- |
+| `accelerate` | Pitch glide amount | ???   | 0             |
 
-Shepard on a cycle:
-* `accelerate` (0): pitch-glide amount.
-
-#### Supersiren
+### Synth siren - Supersiren
 
 A controllable synth siren, defaults to 1 second, draw it out with `sustain`.
 
 ### Supergrind
 
-From `synthdef.art` fragment(2018-08-16):
+From `synthdef.art` fragment (2018-08-16):
 
-* `accelerate` (0): for pitch glide
-* `detune` (0): in Hz, but even small values are quite noticeable
-* `voice` (0): changes harmonics
-* `rate` (1): is the impulse trigger rate
+| Parameter    | What it adjusts                                                       | Range | Default value |
+| ------------ | --------------------------------------------------------------------- | ----- | ------------- |
+| `accelerate` | Pitch glide amount                                                    | ???   | 0             |
+| `detune`     | Oscillator detune (in Hz, but even small values are quite noticeable) | ???   | 0             |
+| `voice`      | Changes harmonics                                                     | ???   | 0             |
+| `rate`       | Impulse trigger rate                                                  | ???   | 1             |
